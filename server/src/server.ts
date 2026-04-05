@@ -18,10 +18,6 @@ app.use(express.json());
 
 startScheduler();
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("Hello World!");
-});
-
 app.post("/create-task", async (req: Request, res: Response) => {
     const { task, scheduledTime } = req.body;
     if (!task || !scheduledTime) {
@@ -41,6 +37,21 @@ app.get("/get-tasks", async (req: Request, res: Response) => {
     try {
         const tasks = await Task.find();
         res.json(tasks);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.delete("/delete-task/:id", async (req: Request, res: Response) => {
+    const { id } = req.params;
+    // console.log(id);
+    try {
+        const task = await Task.findByIdAndDelete(id);
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+        res.json({ message: "Task deleted successfully" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
