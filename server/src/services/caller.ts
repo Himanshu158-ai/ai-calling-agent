@@ -1,20 +1,21 @@
 import {VapiClient} from "@vapi-ai/server-sdk";
 import dotenv from "dotenv";
+import {config} from "../config/config";
 dotenv.config();
 
 const vapi = new VapiClient({
-  token: process.env.VAPI_PRIVATE_KEY!,
+  token: config.vapiPrivateKey,
 });
 
 export async function callUser(task: string): Promise<void> {
-  console.log(`📞 Calling user for: ${task}`);
+  console.log(`Calling user for: ${task}`);
 
   await vapi.calls.create({
-    phoneNumberId: process.env.VAPI_PHONE_NUMBER_ID!,
+    phoneNumberId: config.vapiPhoneNumberId,
     customer: {
-      number: process.env.USER_PHONE_NUMBER!,
+      number: config.userPhoneNumber,
     },
-    assistantId: process.env.VAPI_ASSISTANT_ID!,
+    assistantId: config.vapiAssistentId,
     assistantOverrides: {
       variableValues: {
         task: task,
@@ -22,5 +23,5 @@ export async function callUser(task: string): Promise<void> {
     },
   });
 
-  console.log("✅ Call placed successfully!");
+  console.log("Call placed successfully!");
 }
